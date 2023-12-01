@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
 
 struct node{
 	int key;
@@ -11,18 +11,17 @@ struct node{
 
 
 
-struct node* buildSequence();
+struct node* buildSequence(char *fileName);
 void insertSequence(struct node **headRef,int keyVal,int freqVal);
 struct node* insertTree(struct node* p,int keyVal,int freqVal);
-struct node* buildTree();
-
+struct node* buildTree(char *fileName);
+void preOrder(struct node *Node);
 int main(int argc, char *argv[]) {
-    
-  	struct node* head = buildSequence();
-  	printf("%d",head->key);
-//  	struct node* root =buildTree();
-//  	printf("%d",root->key);
-  	
+    if(argc != 2)
+        return -1;
+  	struct node* root =buildTree(argv[1]);
+  	printf("Pre order traversal of constructed tree: ");
+    preOrder(root);
   	
   	
   	
@@ -35,8 +34,8 @@ int main(int argc, char *argv[]) {
 
 
 
-struct node* buildSequence(){
-	FILE *fPtr=fopen("input.txt","r");
+struct node* buildSequence(char *fileName){
+	FILE *fPtr=fopen(fileName,"r");
 	char string[50];
 	struct node *head= NULL;
 	int keyVal;
@@ -47,7 +46,6 @@ struct node* buildSequence(){
 		keyVal = atoi(strtok(string,","));
 		freqVal=atoi(strtok(NULL,","));
 		insertSequence(&head,keyVal,freqVal);
-		printf("%d",keyVal);
 	}
 	fclose(fPtr);
 	return head;
@@ -96,8 +94,8 @@ struct node* insertTree(struct node* p,int keyVal,int freqVal){
 	}
 	return p;
 }
-struct node* buildTree(){
-	struct node* currentPtr = buildSequence();
+struct node* buildTree(char *fileName){
+	struct node* currentPtr = buildSequence(fileName);
 	struct node* p = NULL;
 	while(currentPtr!=NULL){
 		p=insertTree(p,currentPtr->key,currentPtr->freq);
@@ -105,4 +103,12 @@ struct node* buildTree(){
 		
 	}
 	return p;
+}
+void preOrder(struct node *Node)
+{
+    if(Node == NULL)
+        return;
+    printf("%d ", Node->key);
+    preOrder(Node->left);
+    preOrder(Node->right);
 }
